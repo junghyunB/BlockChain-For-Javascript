@@ -3,7 +3,6 @@ import express from "express";
 import bodyParser from "body-parser";
 import { getBlocks, createBlock } from "./block.js";
 
-// 초기화 함수
 
 const initHttpServer = (myHttpPort) => {
     const app = express();
@@ -17,7 +16,7 @@ const initHttpServer = (myHttpPort) => {
         res.send(getBlocks());
     })
 
-    app.post("/blocks", (req, res) => {
+    app.post("/createblock", (req, res) => {
         res.send(createBlock(req.body.data));
     })
 
