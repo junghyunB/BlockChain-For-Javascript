@@ -2,7 +2,7 @@
 import express from "express"; 
 import bodyParser from "body-parser";
 import { getBlocks, createBlock } from "./block.js";
-import { connectionToPeer } from "./p2pServer.js";
+import { connectionToPeer, getPeers, sendMessage } from "./p2pServer.js";
 
 
 const initHttpServer = (myHttpPort) => {
@@ -23,6 +23,15 @@ const initHttpServer = (myHttpPort) => {
 
     app.post("/addPeer", (req, res) => {
         res.send(connectionToPeer(req.body.data)); 
+    })
+    
+    app.post("/Sendmessage", (req, res) => {
+        res.send(sendMessage(req.body.data));
+        
+    })
+
+    app.get("/peers", (req, res) => {
+        res.send(getPeers());
     })
 
     app.listen(myHttpPort, () => {
