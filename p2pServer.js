@@ -18,4 +18,12 @@ const initConnection = (ws) => {
     sockets.push(ws);
 }
 
-export { initP2PServer };
+// Peer간의 연결 코드
+
+const connectionToPeer = (newPeer) => {
+    const ws = new WebSocket(newPeer);
+    ws.on('open', () => {initConnection(ws); return true;})
+    ws.on("error", () => {console.log("Fail to Connection peer : ", ws.remoteAddress); return false;})
+}
+
+export { initP2PServer, connectionToPeer };
