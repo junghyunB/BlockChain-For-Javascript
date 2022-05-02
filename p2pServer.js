@@ -21,7 +21,7 @@ const initP2PServer = (p2pPort) => {
     // connection, close등 이벤트는 이미 들어 있는 예약어
     server.on('connection', (ws) => {
         initConnection(ws);
-        console.log(`${p2pPort}`);
+        console.log(ws);
     })
     
     console.log("listening P2PServer Port : ", p2pPort);
@@ -46,13 +46,14 @@ const initMessageHandler = (ws) => {
         const message = JSON.parse(data);
         switch(message.type) {
             case MessageType.SENT_MESSAGE: 
-            console.log(message.message);
+            console.log(ws._socket.remoteAddress, " : ", message.message);
                 break;
         }
     })
 }
 
 const write = (ws, message) => {
+    console.log(ws._socket.remoteAddress)
     console.log("write", message);
     ws.send(JSON.stringify(message));
 }

@@ -3,14 +3,21 @@ import express from "express";
 import bodyParser from "body-parser";
 import { getBlocks, createBlock } from "./block.js";
 import { connectionToPeer, getPeers, sendMessage } from "./p2pServer.js";
+import nunjucks from "nunjucks"
+
 
 
 const initHttpServer = (myHttpPort) => {
     const app = express();
     app.use(bodyParser.json());
 
+    app.set('view engine', "html")
+    nunjucks.configure('views', {
+        express:app,
+    })
+
     app.get("/", (req, res) => {
-        res.send("Hello")
+        res.render("index")
     })
 
     app.get("/blocks", (req, res) => {
