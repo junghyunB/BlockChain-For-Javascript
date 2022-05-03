@@ -2,7 +2,7 @@
 import express from "express"; 
 import bodyParser from "body-parser";
 import { getBlocks, createBlock } from "./block.js";
-import { connectionToPeer, getPeers, sendMessage } from "./p2pServer.js";
+import { connectionToPeer, getPeers, mineBlock } from "./p2pServer.js";
 import nunjucks from "nunjucks"
 
 
@@ -28,13 +28,12 @@ const initHttpServer = (myHttpPort) => {
         res.send(createBlock(req.body.data));
     })
 
+    app.post("/mineBlock", (req, res) => {
+        res.send(mineBlock(req.body.data));
+    })
+
     app.post("/addPeer", (req, res) => {
         res.send(connectionToPeer(req.body.data)); 
-    })
-    
-    app.post("/Sendmessage", (req, res) => {
-        res.send(sendMessage(req.body.data));
-        
     })
 
     app.get("/peers", (req, res) => {

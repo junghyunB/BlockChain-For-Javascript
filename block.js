@@ -29,6 +29,10 @@
  const getBlocks = () => {
      return blocks;
  }
+
+ const getLatestBlock = () => {
+     return blocks[blocks.length - 1];
+ }
  
  // 블록 해쉬값 계산 함수
  
@@ -43,33 +47,44 @@
  // 제네시스 블록 생성 함수.
  const createGenesisBlock = () => {
      
-     const genesisBlock = new Block(0, 'The Times 03/Jan/2009 Chancellor on brink of second bailout for banks', new Date().getTime() / 1000, 0, 0, 0, 0);
+     const genesisBlock = new Block(0, 
+        // 'The Times 03/Jan/2009 Chancellor on brink of second bailout for banks'
+        "test",
+
+    //  new Date().getTime() / 1000, 
+    0,
+      0, 0, 0, 0);
      
      genesisBlock.hash = calculateHash(genesisBlock.index, genesisBlock.data, genesisBlock.timestamp, genesisBlock.previousHash, genesisBlock.difficulty, genesisBlock.nonce);
      
      return genesisBlock;
      
  }
- const blocks = [createGenesisBlock()]; // 제네시스 블록 선언할때 한번만 호출
+ let blocks = [createGenesisBlock()]; // 제네시스 블록 선언할때 한번만 호출
  // 블록 만들기
  
  const createBlock = (blockData) => {
-     const previousBlock = blocks[blocks.length - 1]; // 이전 블록 번호 : blocks배열의 길이 -1번째 인덱스
-     const nextIndex = previousBlock.index + 1; // 다음 블록 번호 = 이전 블록번호 + 1
-     const nextTimeStamp = new Date().getTime() / 1000; // 초단위 저장
-     const nextDifficulty = 1;
-     const nextNonce = findNonce(nextIndex, blockData, nextTimeStamp, previousBlock.hash, nextDifficulty);
-     const nextHash = calculateHash(nextIndex, blockData, nextTimeStamp, previousBlock.hash, nextDifficulty, nextNonce); // 다음 블록의 해쉬값
-     const newBlock = new Block(nextIndex, blockData, nextTimeStamp, nextHash, previousBlock.hash, nextDifficulty, nextNonce);
- 
-     if(isValidNewBlock(newBlock, previousBlock)) {
-         blocks.push(newBlock)
-         return newBlock  
-     } 
-     console.log("fail to create newblock")
-     return null;
- }
- 
+    const previousBlock = blocks[blocks.length - 1]; // 이전 블록 번호 : blocks배열의 길이 -1번째 인덱스
+    const nextIndex = previousBlock.index + 1; // 다음 블록 번호 = 이전 블록번호 + 1
+    const nextTimeStamp = new Date().getTime() / 1000; // 초단위 저장
+    const nextDifficulty = 1;
+    const nextNonce = findNonce(nextIndex, blockData, nextTimeStamp, previousBlock.hash, nextDifficulty);
+    const nextHash = calculateHash(nextIndex, blockData, nextTimeStamp, previousBlock.hash, nextDifficulty, nextNonce); // 다음 블록의 해쉬값
+    const newBlock = new Block(nextIndex, blockData, nextTimeStamp, nextHash, previousBlock.hash, nextDifficulty, nextNonce);
+
+    return newBlock;
+}
+
+ const addBlock = (newBlock, previousBlock) => {
+    if(isValidNewBlock(newBlock, previousBlock)) {
+        blocks.push(newBlock)
+        return true  
+    } 
+    return false
+} 
+
+
+
  // 블록 무결성 검증 함수
  /* 
      블록의 인덱스가 이전 블록인덱스보다 1 크다.
@@ -156,4 +171,4 @@
  
  
  
- export { getBlocks, createBlock }
+ export { getBlocks, getLatestBlock, createBlock, addBlock, isValidNewBlock, blocks }
