@@ -9,7 +9,11 @@
     */
    
     import CryptoJS from 'crypto-js';
+    import random from "random"
    
+    const BLOCK_GENERATION_INTERVAL = 10;      // SECOND
+    const DIFFICULTY_ADJUSTMENT_INTERVAL = 10; // generate block count
+
 
     // 블록의 구조
     class Block {
@@ -48,12 +52,12 @@
  const createGenesisBlock = () => {
      
      const genesisBlock = new Block(0, 
-        // 'The Times 03/Jan/2009 Chancellor on brink of second bailout for banks'
+        // 'The Times 03/Jan/2009 Chancellor on brink of second bailout for banks',
         "test",
 
-    //  new Date().getTime() / 1000, 
-    0,
-      0, 0, 0, 0);
+     new Date().getTime() / 1000, 
+    // 0,
+      0, 0, 1, 0);
      
      genesisBlock.hash = calculateHash(genesisBlock.index, genesisBlock.data, genesisBlock.timestamp, genesisBlock.previousHash, genesisBlock.difficulty, genesisBlock.nonce);
      
@@ -67,7 +71,7 @@
     const previousBlock = blocks[blocks.length - 1]; // 이전 블록 번호 : blocks배열의 길이 -1번째 인덱스
     const nextIndex = previousBlock.index + 1; // 다음 블록 번호 = 이전 블록번호 + 1
     const nextTimeStamp = new Date().getTime() / 1000; // 초단위 저장
-    const nextDifficulty = 1;
+    const nextDifficulty = getDifficulty();
     const nextNonce = findNonce(nextIndex, blockData, nextTimeStamp, previousBlock.hash, nextDifficulty);
     const nextHash = calculateHash(nextIndex, blockData, nextTimeStamp, previousBlock.hash, nextDifficulty, nextNonce); // 다음 블록의 해쉬값
     const newBlock = new Block(nextIndex, blockData, nextTimeStamp, nextHash, previousBlock.hash, nextDifficulty, nextNonce);
@@ -155,20 +159,87 @@
  // nonce찾는 함수
  
  const findNonce = (index, data, timestamp, previousHash, difficulty) => {
-     let nonce = 0;
- 
-     while(true) {
-         let hash = calculateHash(index, data, timestamp, previousHash, difficulty, nonce);
- 
-         if(hashMatchDifficulty(hash, difficulty)) {
-             return nonce;
-         } else {
-             nonce++;
-         }
-     }
-    
+    let nonce = 0;
+
+    while(true) {
+        let hash = calculateHash(index, data, timestamp, previousHash, difficulty, nonce);
+
+        if(hashMatchDifficulty(hash, difficulty)) {
+            return nonce;
+        } else {
+            nonce++;
+        }
+    }
+
  }
  
+ const replaceBlockchain = (receiveBlockchain) => {
+
+    console.log(receiveBlockchain);
+    if (isValidBlockchain(receiveBlockchain)) {
+        // let blocks = getBlocks();
+        if(receiveBlockchain.length > blocks.length) {
+            console.log("받은 블록체인 길이가 길다")
+            blocks = receiveBlockchain;
+
+        } else if(receiveBlockchain.length == blocks.length && random.boolean()) {
+            console.log("받은 블록체인 길이가 같다")
+            blocks = receiveBlockchain;
+        }
+    } else {
+        console.log("받은 블록체인에 문제가 있습니다.")
+    }
+}
+
+ const isValidBlockchain = (receiveBlockchain) => {
+    // 같은 제네시스 블록인가
+    if(JSON.stringify(receiveBlockchain[0]) !== JSON.stringify(getBlocks()[0])) {
+        console.log("문제있음")
+        console.log(receiveBlockchain[0])
+        // console.log("2 : ", getBlocks());
+        return false;
+    }
+    // 체인 내의 모든 블록을 확인
+    for (let i = 1; i < receiveBlockchain.length; i++) {
+        if(isValidNewBlock(receiveBlockchain[i], receiveBlockchain[i - 1]) == false) {
+            return false;
+        }
+    }
+    return true;
+}
+ const getAdjustmentDifficulty = () => {
+    // 현재 시간, 마지막으로 난이도 조정된 시간
+    const prevAdjustedBlock = blocks[blocks.length - DIFFICULTY_ADJUSTMENT_INTERVAL - 1];
+    const latestBlock = getLatestBlock();
+    const elapsedTime = latestBlock.timestamp - prevAdjustedBlock.timestamp;
+    const expectedTime = DIFFICULTY_ADJUSTMENT_INTERVAL * BLOCK_GENERATION_INTERVAL;
+
+    if(elapsedTime > expectedTime * 2) {
+        // 난이도 하락
+        return prevAdjustedBlock.difficulty - 1;
+
+    } else if (elapsedTime < expectedTime / 2) {
+        // 난이도 상승
+        return prevAdjustedBlock.difficulty + 1;
+
+    } else {
+
+        return prevAdjustedBlock.difficulty;
+    }
+     
+} 
+
+
+ const getDifficulty = () => {
+    const latestBlock = getLatestBlock();
+    
+    // 난이도 조정 주기 확인
+    if(latestBlock.index % DIFFICULTY_ADJUSTMENT_INTERVAL === 0 &&
+       latestBlock.index !== 0) {
+           return getAdjustmentDifficulty();
+       }
+
+    return latestBlock.difficulty
+ }
  
- 
- export { getBlocks, getLatestBlock, createBlock, addBlock, isValidNewBlock, blocks }
+ export { getBlocks, getLatestBlock, createBlock, addBlock, isValidNewBlock, replaceBlockchain }
