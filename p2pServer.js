@@ -3,6 +3,7 @@ import WebSocket from "ws";
 import { WebSocketServer } from "ws"; // 포트만 넣어주면 웹소켓 서버를 만들어주는 클래스
 import { getBlocks, getLatestBlock, addBlock, createBlock, isValidNewBlock, replaceBlockchain } from "./block.js";
 
+
 const sockets = [];
 const MessageType = {
     // RESPONSE_MESSAGE : 0,
@@ -143,19 +144,22 @@ const broadcasting = (message) => {
     });
 }
 
-const mineBlock = (blockData) => {
+
+
+const mineBlock = (blockData) => {  
+    let newBlockArr = [];
     let i = 0;
-    while(i < 300) {
-    const newBlock = createBlock(blockData);
+    while(i < 1) {
+        const newBlock = createBlock(blockData);
     if (addBlock(newBlock, getLatestBlock())) {
         broadcasting(responseLatestMessage());
         // broadcasting(responseAllMessage());
-    } 
-    i++;
-    console.log(newBlock)
+        newBlockArr.push(newBlock);
+    }
+    i++
 }
+    return newBlockArr
 }
-
 
 
 // 새로운 블록을 채굴했을 때 연결된 노드들에게 전파

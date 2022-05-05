@@ -5,10 +5,9 @@ import { getBlocks, createBlock } from "./block.js";
 import { connectionToPeer, getPeers, mineBlock } from "./p2pServer.js";
 import nunjucks from "nunjucks"
 
-
-
 const initHttpServer = (myHttpPort) => {
     const app = express();
+    app.use(express.urlencoded({extended:true}))
     app.use(bodyParser.json());
 
     app.set('view engine', "html")
@@ -29,8 +28,13 @@ const initHttpServer = (myHttpPort) => {
     })
 
     app.post("/mineBlock", (req, res) => {
-        res.send(mineBlock(req.body.data));
-    })
+        let newBlockHash = [];
+        let newBlockArr = mineBlock(req.body.data)
+        for(let i = 0; i < newBlockArr.length; i++) {
+            newBlockHash.push(newBlockArr[i].hash + '\n')         
+        }
+        res.render("index")
+})
 
     app.post("/addPeer", (req, res) => {
         res.send(connectionToPeer(req.body.data)); 
