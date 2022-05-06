@@ -3,6 +3,7 @@ import express from "express";
 import bodyParser from "body-parser";
 import { getBlocks, createBlock } from "./block.js";
 import { connectionToPeer, getPeers, mineBlock } from "./p2pServer.js";
+import { getPublicKeyFromWallet } from "./wallet.js"
 import nunjucks from "nunjucks"
 
 const initHttpServer = (myHttpPort) => {
@@ -35,6 +36,12 @@ const initHttpServer = (myHttpPort) => {
         }
         res.render("index")
 })
+
+    app.get("/address", (req, res) => {
+        const address = getPublicKeyFromWallet();
+        res.send({"address : ": address})
+
+    })
 
     app.post("/addPeer", (req, res) => {
         res.send(connectionToPeer(req.body.data)); 
