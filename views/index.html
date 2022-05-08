@@ -6,18 +6,18 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <script src="../button.js"></script>
 </head>
 <body>
-            <form action="/mineBlock" method="post">
+            <form method="post">
               <li>
                 <label>Data넣기</label>
               <input type="text" name="data">
             </li>
-            <button id="farm" style="display:visibility">채굴 시작</button>
+            <button id="farm" style="display:visibility" formaction="/mineBlock">채굴 시작</button>
             <button id="stopfarm" style="display:none">채굴 중지</button>
           </form>
           
           <!-- <div style="width:400px">{{hash}}</div> -->
+          <script src = "../a.js"></script>
 </body>
 </html>

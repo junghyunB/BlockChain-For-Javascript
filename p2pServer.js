@@ -147,19 +147,14 @@ const broadcasting = (message) => {
 
 
 const mineBlock = (blockData) => {  
-    let newBlockArr = [];
-    let i = 0;
-    while(i < 1) {
         const newBlock = createBlock(blockData);
     if (addBlock(newBlock, getLatestBlock())) {
         broadcasting(responseLatestMessage());
         // broadcasting(responseAllMessage());
-        newBlockArr.push(newBlock);
+
     }
-    i++
 }
-    return newBlockArr
-}
+
 
 
 // 새로운 블록을 채굴했을 때 연결된 노드들에게 전파

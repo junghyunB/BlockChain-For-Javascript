@@ -52,8 +52,8 @@
  const createGenesisBlock = () => {
      
      const genesisBlock = new Block(0, 
-        // 'The Times 03/Jan/2009 Chancellor on brink of second bailout for banks',
-        "test",
+        'The Times 03/Jan/2009 Chancellor on brink of second bailout for banks',
+        // "test",
 
      new Date().getTime() / 1000, 
     // 0,
@@ -242,4 +242,4 @@
     return latestBlock.difficulty
  }
  
- export { getBlocks, getLatestBlock, createBlock, addBlock, isValidNewBlock, replaceBlockchain }
+ export { getBlocks, getLatestBlock, createBlock, addBlock, isValidNewBlock, replaceBlockchain, blocks }

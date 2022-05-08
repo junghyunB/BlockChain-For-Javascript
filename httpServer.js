@@ -1,13 +1,17 @@
 // 웹에 명령어를 입력해서 내 노드를 제어하는 서버
 import express from "express"; 
 import bodyParser from "body-parser";
-import { getBlocks, createBlock } from "./block.js";
+import { getBlocks, createBlock, blocks } from "./block.js";
 import { connectionToPeer, getPeers, mineBlock } from "./p2pServer.js";
 import { getPublicKeyFromWallet } from "./wallet.js"
 import nunjucks from "nunjucks"
+import {pool} from "./db.js"
+import path from 'path';
 
+const __dirname = path.resolve();
 const initHttpServer = (myHttpPort) => {
     const app = express();
+    app.use(express.static(__dirname + "/public"));
     app.use(express.urlencoded({extended:true}))
     app.use(bodyParser.json());
 
@@ -28,13 +32,10 @@ const initHttpServer = (myHttpPort) => {
         res.send(createBlock(req.body.data));
     })
 
-    app.post("/mineBlock", (req, res) => {
-        let newBlockHash = [];
-        let newBlockArr = mineBlock(req.body.data)
-        for(let i = 0; i < newBlockArr.length; i++) {
-            newBlockHash.push(newBlockArr[i].hash + '\n')         
-        }
-        res.render("index")
+    app.post("/mineBlock", async(req, res) => {
+        res.send(mineBlock(req.body.data));  
+        let latestBlock = blocks[blocks.length - 1]
+        await pool.query(`INSERT INTO blockdata(idx, datas, timestamp, hashs, previoushash, difficulty, nonce) VALUES(${latestBlock.index}, "${latestBlock.data}", "${latestBlock.timestamp}", "${latestBlock.hash}", "${latestBlock.previousHash}", ${latestBlock.difficulty}, ${latestBlock.nonce})`)
 })
 
     app.get("/address", (req, res) => {
