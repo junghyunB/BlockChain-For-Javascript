@@ -44,6 +44,12 @@ const initHttpServer = (myHttpPort) => {
 
     })
 
+    app.post("/sendTransaction", (req, res) => {
+        const address = req.body.address;
+        const amount = req.body.amount;
+        res.send(sendTransaction(address, amount));
+    })
+
     app.post("/addPeer", (req, res) => {
         res.send(connectionToPeer(req.body.data)); 
     })
