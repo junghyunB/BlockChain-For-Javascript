@@ -34,8 +34,8 @@ const initHttpServer = (myHttpPort) => {
 
     app.post("/mineBlock", async(req, res) => {
         res.send(mineBlock(req.body.data));  
-        let latestBlock = blocks[blocks.length - 1]
-        await pool.query(`INSERT INTO blockdata(idx, datas, timestamp, hashs, previoushash, difficulty, nonce) VALUES(${latestBlock.index}, "${latestBlock.data}", "${latestBlock.timestamp}", "${latestBlock.hash}", "${latestBlock.previousHash}", ${latestBlock.difficulty}, ${latestBlock.nonce})`)
+        // let latestBlock = blocks[blocks.length - 1]
+        // await pool.query(`INSERT INTO blockdata(idx, datas, timestamp, hashs, previoushash, difficulty, nonce) VALUES(${latestBlock.index}, "${latestBlock.data}", "${latestBlock.timestamp}", "${latestBlock.hash}", "${latestBlock.previousHash}", ${latestBlock.difficulty}, ${latestBlock.nonce})`)
 })
 
     app.get("/address", (req, res) => {

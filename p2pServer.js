@@ -2,6 +2,7 @@
 import WebSocket from "ws";
 import { WebSocketServer } from "ws"; // 포트만 넣어주면 웹소켓 서버를 만들어주는 클래스
 import { getBlocks, getLatestBlock, addBlock, createBlock, isValidNewBlock, replaceBlockchain } from "./block.js";
+import { getTransactionPool, addToTransactionPool } from './transaction.js';
 
 
 const sockets = [];
@@ -70,6 +71,15 @@ const initMessageHandler = (ws) => {
     })
 }
 
+const handleTransactionPoolResponse = (recieveTransactionPool) => {
+    console.log('recieveTransactionPool : ', recieveTransactionPool);
+
+    recieveTransactionPool.forEach((transaction) => {
+        // 중복검사 + 트랜잭션 풀에 추가
+        addToTransactionPool(transaction)
+        // 다시 전파
+    })
+}
 
 
 
