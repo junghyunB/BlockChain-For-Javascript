@@ -163,6 +163,7 @@ const mineBlock = (blockData) => {
         // broadcasting(responseAllMessage());
 
     }
+    console.log("채굴 완료")
 }
 
 

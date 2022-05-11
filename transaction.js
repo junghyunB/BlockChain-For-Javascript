@@ -1,6 +1,6 @@
 import CryptoJS from "crypto-js";
 import _ from 'lodash';
-import { getPublicKeyFromWallet, getPrivateKeyFromWallet} from "./wallet";
+import { getPublicKeyFromWallet, getPrivateKeyFromWallet } from "./wallet.js";
 const COINBASE_AMOUNT = 50;
 
 let transactionPool = [];
@@ -201,6 +201,7 @@ const addToTransactionPool = (transaction) => {
     if(!isValidateTxForPool(transaction)) {
         throw Error('추가하려는 트랜잭션이 트랜잭션 풀에 있음 ', transaction)
     }
+
     transactionPool.push(transaction);
 }
 
@@ -256,6 +257,31 @@ const isValidateTxForPool = (transaction) => {
     return true;
 }
 
+const updateTransactionPool = () => {
+    const removable = [];
+    // 1. 현재 트랜잭션 풀에 있는 트랜잭션 중에 
+    // 사용되지 않은 TxOuts 내용과 일치하지 않는 트랜잭션을 제거한다.
+    for(const tx of transactionPool) {
+        for(const txIn of tx.txIns) {
+            if(isInTx(txIn)) {
+
+            } else {
+                removable.push(tx);
+                break;
+            }
+        }
+    }
+
+    transactionPool = _.without(transactionPool, ...removable);
+}
+
+const isInTx = (txIn) => {
+    const findTxOut = _(unspentTxOuts).find((uTxO) => { return uTxO.txOutIndex === txIn.txOutIndex && 
+    uTxO.txOutId === txIn.txOutId});
+
+    return findTxOut !== undefined;
+}
 
 
-export { getTransactionPool, addToTransactionPool }
+
+export { getTransactionPool, addToTransactionPool, getCoinbaseTransaction }

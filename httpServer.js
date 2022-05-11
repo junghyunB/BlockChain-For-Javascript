@@ -33,10 +33,17 @@ const initHttpServer = (myHttpPort) => {
     })
 
     app.post("/mineBlock", async(req, res) => {
-        res.send(mineBlock(req.body.data));  
-        // let latestBlock = blocks[blocks.length - 1]
+        mineBlock(req.body.data)
+        
         // await pool.query(`INSERT INTO blockdata(idx, datas, timestamp, hashs, previoushash, difficulty, nonce) VALUES(${latestBlock.index}, "${latestBlock.data}", "${latestBlock.timestamp}", "${latestBlock.hash}", "${latestBlock.previousHash}", ${latestBlock.difficulty}, ${latestBlock.nonce})`)
+        // res.redirect("/");
 })
+
+    app.get("/getdata", async(req, res) => {
+        // let latestBlock = blocks[blocks.length - 1]
+        // await pool.query(`SELECT * FROM blockdata where idx=${latestBlock.index} `);
+        
+    })
 
     app.get("/address", (req, res) => {
         const address = getPublicKeyFromWallet();

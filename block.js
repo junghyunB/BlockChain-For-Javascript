@@ -10,6 +10,8 @@
    
     import CryptoJS from 'crypto-js';
     import random from "random"
+    import { getCoinbaseTransaction, getTransactionPool } from "./transaction.js"
+    import { getPublicKeyFromWallet } from "./wallet.js"
    
     const BLOCK_GENERATION_INTERVAL = 10;      // SECOND
     const DIFFICULTY_ADJUSTMENT_INTERVAL = 10; // generate block count
@@ -79,9 +81,24 @@
     return newBlock;
 }
 
+const createNextBlock = () => {
+    // 1. 코인베이스 트랜잭션 생성
+    const coinbaseTx = getCoinbaseTransaction(getPublicKeyFromWallet(), getLatestBlock().index + 1);
+
+    // 2. 생성된 코인베이스 트랜잭션 뒤에 현재 보유 중인 트랜잭션 풀의 내용을 포함( 마이닝된 블록의 데이터 )
+
+    const blockData = [coinbaseTx].concat(getTransactionPool());
+    return createBlock(blockData);
+}
+
  const addBlock = (newBlock, previousBlock) => {
     if(isValidNewBlock(newBlock, previousBlock)) {
         blocks.push(newBlock)
+
+        //사용되지 않은 txOuts 셋팅 
+
+        //트랜잭션 풀 없데이트
+        // updateTransactionPool(unspentTxOuts)
         return true  
     } 
     return false
@@ -178,14 +195,16 @@
     console.log(receiveBlockchain);
     if (isValidBlockchain(receiveBlockchain)) {
         // let blocks = getBlocks();
-        if(receiveBlockchain.length > blocks.length) {
+        if((receiveBlockchain.length > blocks.length) ||
+            receiveBlockchain.length == blocks.length && random.boolean()) {
             console.log("받은 블록체인 길이가 길다")
             blocks = receiveBlockchain;
 
-        } else if(receiveBlockchain.length == blocks.length && random.boolean()) {
-            console.log("받은 블록체인 길이가 같다")
-            blocks = receiveBlockchain;
-        }
+        //사용되지 않은 txOuts 셋팅 
+        
+        //트랜잭션 풀 없데이트
+        updateTransactionPool(unspentTxOuts)
+        } 
     } else {
         console.log("받은 블록체인에 문제가 있습니다.")
     }
