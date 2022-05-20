@@ -111,9 +111,10 @@ const handleBlockchainResponse = (receiveBlockchain) => {
 }
 
 const handleTransactionPoolResponse = (recieveTransactionPool) => {
-    console.log('recieveTransactionPool : ', recieveTransactionPool);
+    const recieveTransaction = JSON.parse(recieveTransactionPool)
+    console.log('recieveTransactionPool : ', recieveTransaction);
 
-    recieveTransactionPool.forEach((transaction) => {
+    recieveTransaction.forEach((transaction) => {
         addToTransactionPool(transaction);
 
         // 다시 전파

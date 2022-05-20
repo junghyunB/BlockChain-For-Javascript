@@ -23,8 +23,8 @@
     증명하는 과정에서 A는 B에게 아무런 정보도 주지 않는다.
 */
 
-import ecdsa from "elliptic";
 import fs from "fs";
+import ecdsa from "elliptic";
 
 const ec = new ecdsa.ec("secp256k1");
 const privateKeyLocation = "wallet/" + ( process.env.PRIVATE_KEY || "default");
